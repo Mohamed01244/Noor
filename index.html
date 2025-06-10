@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>نور - مرشد الثانوية العامة</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Font for Arabic text -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Base styles and new color theme */
+        :root {
+            --bg-light: #f8fafc; /* slate-50 */
+            --bg-main: #f1f5f9; /* slate-100 */
+            --border-color: #e2e8f0; /* slate-200 */
+            --text-primary: #1e293b; /* slate-800 */
+            --text-secondary: #64748b; /* slate-500 */
+            --brand-primary: #0ea5e9; /* sky-500 */
+            --brand-primary-hover: #0284c7; /* sky-600 */
+            --brand-secondary: #f59e0b; /* amber-500 */
+            --user-message-bg: var(--brand-primary);
+        }
+        body { 
+            font-family: 'Tajawal', sans-serif; 
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            overscroll-behavior-y: contain; /* Prevents pull-to-refresh on mobile */
+        }
+        .smooth-scroll { scroll-behavior: smooth; }
+        #chat-area::-webkit-scrollbar { width: 6px; }
+        #chat-area::-webkit-scrollbar-track { background: var(--bg-main); }
+        #chat-area::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        #chat-area::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Hide default file input */
+        #file-input { display: none; }
+    </style>
+</head>
+<body dir="rtl" class="h-screen w-screen overflow-hidden flex flex-col">
+
+    <!-- Header Section -->
+    <header class="bg-slate-50 border-b border-slate-200 p-3 sm:p-4 flex items-center sticky top-0 z-20 shrink-0">
+        <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-500 rounded-full flex items-center justify-center text-white text-xl sm:text-2xl font-bold ml-3 sm:ml-4 flex-shrink-0 shadow-sm">
+            ن
+        </div>
+        <div>
+            <h1 class="text-lg sm:text-xl font-bold text-slate-800">نور - مرشدك الدراسي</h1>
+            <p class="text-xs sm:text-sm text-slate-500">جاهز لمساعدتك في أي وقت</p>
+        </div>
+    </header>
+
+    <!-- Main Chat Display Area -->
+    <main id="chat-area" class="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6 smooth-scroll">
+        <div id="messages-container" class="max-w-4xl mx-auto">
+            <!-- Chat messages will be dynamically injected here -->
+        </div>
+    </main>
+
+    <!-- Footer with Input Form and Suggestions -->
+    <footer class="bg-slate-50/95 backdrop-blur-sm p-2 sm:p-3 border-t border-slate-200 shrink-0">
+        <div class="max-w-4xl mx-auto">
+            <!-- Image Preview Container -->
+            <div id="image-preview-container" class="mb-2 hidden items-center justify-between p-2 bg-slate-200 rounded-lg">
+                <div class="flex items-center gap-2">
+                     <img id="image-preview" class="w-12 h-12 rounded-md object-cover" src=""/>
+                     <span id="image-preview-name" class="text-sm text-slate-600"></span>
+                </div>
+                <button id="remove-image-btn" class="text-slate-500 hover:text-red-500 p-1 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
+                </button>
+            </div>
+            
+            <!-- Suggestions Buttons Container -->
+            <div id="suggestions-container" class="flex flex-wrap gap-2 mb-2 sm:mb-3 justify-center">
+                <!-- Suggestion buttons will be dynamically injected here -->
+            </div>
+
+            <!-- Chat Input Form -->
+            <form id="chat-form" class="flex items-center gap-2 bg-slate-100 border border-slate-200 rounded-full p-1.5 sm:p-2">
+                <input id="file-input" type="file" accept="image/*">
+                <button type="button" id="attach-file-btn" class="text-slate-500 hover:text-sky-500 p-2 rounded-full transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" /></svg>
+                </button>
+                <input
+                    id="chat-input"
+                    type="text"
+                    placeholder="اسأل نور..."
+                    class="w-full bg-transparent focus:outline-none px-2 sm:px-3 text-slate-700 placeholder-slate-500 text-base"
+                    autocomplete="off">
+                <button
+                    id="send-button"
+                    type="submit"
+                    class="bg-sky-500 text-white rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center hover:bg-sky-600 transition-colors disabled:bg-sky-300 disabled:cursor-not-allowed shrink-0 shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 sm:h-6 sm:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
+                </button>
+            </form>
+        </div>
+    </footer>
+
+<script>
+    // --- 1. CONFIGURATION ---
+    const API_KEY = "AIzaSyBsFexpbWLIbq007yklIYLMXwv5JoGf7Hg";
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+    
+    // Nour's updated constitution with memory
+    const SYSTEM_PROMPT = `
+[System Role: الهوية الأساسية]
+أنت "نور"، مرشد دراسي يعمل بالذكاء الاصطناعي، تم تطويرك خصيصًا لطلاب الثانوية العامة في مصر. مهمتك الأساسية هي ضمان الفهم العميق للمواد الدراسية، وبناء ثقة الطالب بنفسه، وتقديم الدعم اللازم لاجتياز هذه المرحلة بنجاح. أنت تتذكر سياق محادثاتنا بالكامل لتقديم إرشادات أكثر دقة وملاءمة بمرور الوقت.
+[Persona: شخصية المدرس المصري]
+ * محترف وخبير: لديك فهم عميق لمناهج الثانوية العامة المصرية وتحديثاتها.
+ * صبور ومتفهم وذكي عاطفيًا ومنطقي ومحفز.
+ * اللهجة: تتحدث باللهجة المصرية المتعلمة والراقية والواضحة.
+[Core Pedagogy: منهجية التدريس]
+ * الفهم أولًا. التنظيم باستخدام ## للعناوين، • للنقاط، و **bold** للمصطلحات.
+ * الاستجابة التكيفية: قم بالتوسع في الشرح عند الحاجة باستخدام طرق مختلفة.
+ * تحليل الصور: عند إعطائك صورة (خاصة الأسئلة والرسوم البيانية والخرائط)، قم بتحليلها بدقة في سياق المنهج المصري.
+[Technical Directive: صيغة الرد الإلزامية]
+قاعدة إلزامية مطلقة: يجب أن ترد دائمًا بصيغة JSON صالحة 100%. لا تضع أي نص خارج كائن الـ JSON.
+الـ JSON يجب أن يحتوي على مفتاحين فقط: "response" و "suggestions".
+[Supplemental Role: الدعم النفسي]
+إذا عبر الطالب عن مشاعر سلبية، قم بالتبديل إلى وضع "المرشد النفسي" بتقديم الدعم والنصائح العملية.
+[Constraints: المحظورات]
+ * لا تخترع معلومات. التزم فقط بمناهج الثانوية العامة المصرية. لا تقدم حلولًا نهائية للمسائل، بل قم بتوجيه الطالب.
+Based on the user's question, respond ONLY with a valid JSON object following the specified format.
+`;
+
+    // --- 2. DOM ELEMENT REFERENCES ---
+    const chatArea = document.getElementById('chat-area');
+    const messagesContainer = document.getElementById('messages-container');
+    const chatForm = document.getElementById('chat-form');
+    const chatInput = document.getElementById('chat-input');
+    const sendButton = document.getElementById('send-button');
+    const suggestionsContainer = document.getElementById('suggestions-container');
+    const attachFileBtn = document.getElementById('attach-file-btn');
+    const fileInput = document.getElementById('file-input');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const imagePreview = document.getElementById('image-preview');
+    const imagePreviewName = document.getElementById('image-preview-name');
+    const removeImageBtn = document.getElementById('remove-image-btn');
+
+    // --- 3. STATE MANAGEMENT ---
+    let chatHistory = [];
+    let isLoading = true;
+    let selectedFile = null; // To store { base64, mimeType }
+
+    // --- 4. PERSISTENCE (LOCALSTORAGE) ---
+    const saveHistoryToLocalStorage = (history) => {
+        try {
+            localStorage.setItem('nour_chat_history', JSON.stringify(history));
+        } catch (e) {
+            console.error("Failed to save chat history:", e);
+        }
+    };
+
+    const loadHistoryFromLocalStorage = () => {
+        try {
+            const storedHistory = localStorage.getItem('nour_chat_history');
+            return storedHistory ? JSON.parse(storedHistory) : null;
+        } catch (e) {
+            console.error("Failed to load chat history:", e);
+            return null;
+        }
+    };
+
+    // --- 5. UI HELPER FUNCTIONS ---
+    const scrollToBottom = () => { chatArea.scrollTop = chatArea.scrollHeight; };
+
+    const renderMarkdown = (text) => {
+        let html = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        html = html.replace(/##\s*(.*)/g, '<h2 class="text-xl sm:text-2xl font-bold mb-3 text-slate-800">$1</h2>');
+        html = html.replace(/\n•\s*(.*)/g, '<li class="mb-2 ml-4 list-disc">$1</li>');
+        html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-slate-900">$1</strong>');
+        html = html.replace(/\n/g, '<br>');
+        if (html.includes('<li')) { html = '<ul>' + html + '</ul>'; }
+        return html;
+    };
+
+    const addMessageToUI = (sender, text, imageBase64 = null) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `flex mb-6 ${sender === 'user' ? 'justify-end' : 'justify-start'}`;
+        
+        const contentContainer = document.createElement('div');
+        contentContainer.className = `max-w-[90%] sm:max-w-lg lg:max-w-xl p-1 rounded-2xl shadow-sm ${sender === 'user' ? 'bg-sky-500' : 'bg-white'}`;
+        
+        if (imageBase64) {
+            const img = document.createElement('img');
+            img.src = imageBase64;
+            img.className = 'w-full h-auto rounded-xl object-cover mb-2';
+            contentContainer.appendChild(img);
+        }
+        
+        if (text) {
+             const textDiv = document.createElement('div');
+             textDiv.className = `px-3 pb-2 break-words ${sender === 'user' ? 'text-white' : 'text-slate-700'}`;
+             textDiv.innerHTML = (sender === 'bot') ? renderMarkdown(text) : text;
+             contentContainer.appendChild(textDiv);
+        }
+
+        messageDiv.appendChild(contentContainer);
+        messagesContainer.appendChild(messageDiv);
+        scrollToBottom();
+    };
+    
+    const showLoadingIndicator = () => {
+        const loadingDiv = document.createElement('div');
+        loadingDiv.id = 'loading-indicator';
+        loadingDiv.className = 'flex justify-start mb-6';
+        loadingDiv.innerHTML = `
+            <div class="px-5 py-3 rounded-2xl shadow-sm bg-white">
+                <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-pulse"></div>
+                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-pulse" style="animation-delay: 0.2s;"></div>
+                    <div class="w-2 h-2 bg-slate-400 rounded-full animate-pulse" style="animation-delay: 0.4s;"></div>
+                </div>
+            </div>`;
+        messagesContainer.appendChild(loadingDiv);
+        scrollToBottom();
+    };
+
+    const hideLoadingIndicator = () => {
+        const indicator = document.getElementById('loading-indicator');
+        if (indicator) indicator.remove();
+    };
+    
+    const updateSuggestions = (suggestions) => {
+        suggestionsContainer.innerHTML = '';
+        if (!suggestions || suggestions.length === 0) return;
+        suggestions.forEach(s => {
+            const button = document.createElement('button');
+            button.className = "px-3 py-1.5 sm:px-4 sm:py-2 bg-sky-100/50 text-sky-700 rounded-full text-sm hover:bg-sky-100 transition-colors font-medium";
+            button.textContent = s;
+            button.onclick = () => handleSendMessage(s);
+            suggestionsContainer.appendChild(button);
+        });
+    };
+    
+    const toggleInputState = (disabled) => {
+        chatInput.disabled = disabled;
+        sendButton.disabled = disabled;
+        attachFileBtn.disabled = disabled;
+        isLoading = disabled;
+    };
+
+    // --- 6. FILE HANDLING ---
+    attachFileBtn.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            selectedFile = {
+                base64: e.target.result.split(',')[1],
+                mimeType: file.type,
+            };
+            imagePreview.src = e.target.result;
+            imagePreviewName.textContent = file.name.length > 20 ? file.name.substring(0, 17) + '...' : file.name;
+            imagePreviewContainer.classList.remove('hidden');
+            imagePreviewContainer.classList.add('flex');
+        };
+        reader.readAsDataURL(file);
+    });
+    
+    removeImageBtn.addEventListener('click', () => {
+        selectedFile = null;
+        fileInput.value = ''; // Reset file input
+        imagePreviewContainer.classList.add('hidden');
+    });
+
+    // --- 7. CORE LOGIC ---
+    const handleSendMessage = async (messageText) => {
+        const trimmedMessage = messageText.trim();
+        if (!trimmedMessage && !selectedFile) return;
+
+        toggleInputState(true);
+        addMessageToUI('user', trimmedMessage, selectedFile ? `data:${selectedFile.mimeType};base64,${selectedFile.base64}` : null);
+        chatInput.value = '';
+        updateSuggestions([]);
+        showLoadingIndicator();
+        
+        // Construct the payload for the API
+        const userParts = [];
+        if (trimmedMessage) {
+            userParts.push({ text: trimmedMessage });
+        }
+        if (selectedFile) {
+            userParts.push({
+                inline_data: {
+                    mime_type: selectedFile.mimeType,
+                    data: selectedFile.base64,
+                },
+            });
+        }
+        
+        // Add to local history and clear the selected file
+        chatHistory.push({ role: 'user', parts: userParts });
+        removeImageBtn.click();
+        
+        const requestPayload = { contents: [{ role: "user", parts: [{ text: SYSTEM_PROMPT }] }, ...chatHistory] };
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(requestPayload)
+            });
+            
+            if (!response.ok) throw new Error(`API Error: ${response.status}`);
+
+            const data = await response.json();
+            const botResponseText = data.candidates[0].content.parts[0].text;
+            
+            const cleanedResponse = botResponseText.replace(/```json/g, '').replace(/```/g, '').trim();
+            const botResponseData = JSON.parse(cleanedResponse);
+
+            hideLoadingIndicator();
+            addMessageToUI('bot', botResponseData.response);
+            updateSuggestions(botResponseData.suggestions);
+            
+            chatHistory.push({ role: 'model', parts: [{ text: JSON.stringify(botResponseData) }] });
+            saveHistoryToLocalStorage(chatHistory);
+
+        } catch (error) {
+            console.error('Error fetching chat response:', error);
+            hideLoadingIndicator();
+            addMessageToUI('bot', 'عفوًا، حدث خطأ أثناء محاولة الرد. من فضلك تأكد من اتصالك بالإنترنت وحاول مرة أخرى.');
+        } finally {
+            toggleInputState(false);
+            chatInput.focus();
+        }
+    };
+
+    // --- 8. EVENT LISTENERS AND INITIALIZATION ---
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleSendMessage(chatInput.value);
+    });
+
+    window.addEventListener('load', () => {
+        const savedHistory = loadHistoryFromLocalStorage();
+        if (savedHistory && savedHistory.length > 0) {
+            chatHistory = savedHistory;
+            messagesContainer.innerHTML = '';
+            chatHistory.forEach(msg => {
+                if (msg.role === 'user') {
+                    // Reconstruct user message for display
+                    const textPart = msg.parts.find(p => p.text)?.text || '';
+                    const imagePart = msg.parts.find(p => p.inline_data);
+                    const imageBase64 = imagePart ? `data:${imagePart.inline_data.mime_type};base64,${imagePart.inline_data.data}` : null;
+                    addMessageToUI('user', textPart, imageBase64);
+                } else if (msg.role === 'model') {
+                    // Reconstruct bot message for display
+                    try {
+                        const botData = JSON.parse(msg.parts[0].text);
+                        addMessageToUI('bot', botData.response);
+                    } catch { /* malformed data, skip */ }
+                }
+            });
+            // Show suggestions from the last message
+            const lastMessage = chatHistory[chatHistory.length - 1];
+            if (lastMessage && lastMessage.role === 'model') {
+                 try {
+                    const lastBotData = JSON.parse(lastMessage.parts[0].text);
+                    updateSuggestions(lastBotData.suggestions);
+                 } catch {}
+            }
+        } else {
+            // Display initial welcome message if no history
+            const initialBotMessage = {
+                response: "## أهلًا بيك أنا \"نور\"\nأنا هنا مخصوص علشان أكون معاك في رحلة الثانوية العامة. تقدر تسألني أي سؤال أو ترفع صورة سؤال من كتاب، وأنا هساعدك.\n\n• **ذاكرتي قوية:** أنا بحفظ محادثتنا عشان أقدم لك أفضل مساعدة.\n• **مساعدك الشامل:** اسألني في أي مادة، علمي أو أدبي.\n\n**يلا بينا نبدأ!**",
+                suggestions: ["اشرح لي قانون كيرشوف الثاني", "ما هي أسباب الحملة الفرنسية؟", "حلل الصورة دي (جرب ترفع صورة)", "حاسس بقلق من الامتحانات"]
+            };
+            addMessageToUI('bot', initialBotMessage.response);
+            updateSuggestions(initialBotMessage.suggestions);
+            chatHistory.push({ role: 'model', parts: [{ text: JSON.stringify(initialBotMessage) }] });
+            saveHistoryToLocalStorage(chatHistory);
+        }
+        
+        toggleInputState(false);
+        chatInput.focus();
+    });
+</script>
+
+</body>
+</html>
+
